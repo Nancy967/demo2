@@ -1,5 +1,8 @@
-package com.example.demo;
+package com.example.demo.controller;
 
+import com.example.demo.Student;
+import com.example.demo.StudentRowMapper;
+import com.example.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -17,6 +20,9 @@ public class StudentController {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private StudentService studentService;
 
     @PostMapping("/students")
     public String insert(@RequestBody Student student){
@@ -82,17 +88,6 @@ public class StudentController {
 
     @GetMapping("/students/{studentId}")
     public Student select1(@PathVariable Integer studentId){
-        String sql = "SELECT id, name FROM student WHERE id = :studentId";
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("studentId", studentId);
-
-        List<Student> list = namedParameterJdbcTemplate.query(sql, map, new StudentRowMapper());
-
-        if (list.size()>0){
-            return list.get(0);
-        }else {
-            return null;
-        }
+        return studentService.getById(studentId);
     }
 }
