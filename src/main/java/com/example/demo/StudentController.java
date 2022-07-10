@@ -55,6 +55,7 @@ public class StudentController {
     }
 
 
+
     @DeleteMapping("/students/{studentId}")
     public String delete(@PathVariable Integer studentId){
         String sql = "DELETE FROM student WHERE id = :studentId";
@@ -65,5 +66,33 @@ public class StudentController {
         namedParameterJdbcTemplate.update(sql, map);
 
         return "DELETE sql";
+    }
+
+
+    @GetMapping("/students")
+    public List<Student> select(){
+        String sql = "SELECT id, name FROM student";
+
+        Map<String, Object> map = new HashMap<>();
+
+        List<Student> list = namedParameterJdbcTemplate.query(sql, map, new StudentRowMapper());
+
+        return list;
+    }
+
+    @GetMapping("/students/{studentId}")
+    public Student select1(@PathVariable Integer studentId){
+        String sql = "SELECT id, name FROM student WHERE id = :studentId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("studentId", studentId);
+
+        List<Student> list = namedParameterJdbcTemplate.query(sql, map, new StudentRowMapper());
+
+        if (list.size()>0){
+            return list.get(0);
+        }else {
+            return null;
+        }
     }
 }
